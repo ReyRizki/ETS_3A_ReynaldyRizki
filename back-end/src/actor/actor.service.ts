@@ -9,7 +9,7 @@ export class ActorService {
     constructor(@InjectRepository(Actor) private readonly repo: Repository<Actor>) { }
 
     public async getAll(): Promise<ActorDTO[]> {
-        return await this.repo.find()
+        return await this.repo.find({ order: { actor_id: "ASC" }})
             .then((actors) => actors.map((e) => ActorDTO.fromEntity(e)));
     }
 
