@@ -17,4 +17,12 @@ export class ActorService {
         return this.repo.save(dto)
             .then((e) => ActorDTO.fromEntity(e));
     }
+
+    public async update(id: number, dto: ActorDTO) {
+        return await this.repo.update({ actor_id: id }, dto);
+    }
+
+    public async delete(id: number) {
+        return await this.repo.delete({ actor_id: id });
+    }
 }
