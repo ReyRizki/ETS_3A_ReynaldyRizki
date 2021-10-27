@@ -9,12 +9,20 @@ export class ActorService {
     constructor(@InjectRepository(Actor) private readonly repo: Repository<Actor>) { }
 
     public async getAll(): Promise<ActorDTO[]> {
-        return await this.repo.find()
+        return await this.repo.find({ order: { actor_id: "ASC" }})
             .then((actors) => actors.map((e) => ActorDTO.fromEntity(e)));
     }
 
     public async create(dto: ActorDTO): Promise<ActorDTO> {
         return this.repo.save(dto)
             .then((e) => ActorDTO.fromEntity(e));
+    }
+
+    public async update(id: number, dto: ActorDTO) {
+        return await this.repo.update({ actor_id: id }, dto);
+    }
+
+    public async delete(id: number) {
+        return await this.repo.delete({ actor_id: id });
     }
 }

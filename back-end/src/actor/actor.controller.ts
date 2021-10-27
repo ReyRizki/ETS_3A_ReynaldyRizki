@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put } from '@nestjs/common';
 import { ActorService } from './actor.service';
 import { ActorDTO } from './actor.dto';
 
@@ -14,5 +14,15 @@ export class ActorController {
     @Post()
     public async post(@Body() dto: ActorDTO): Promise<ActorDTO> {
         return this.serv.create(dto);
+    }
+
+    @Put(':id')
+    public async update(@Param('id') id: number, @Body() dto: ActorDTO) {
+        return this.serv.update(id, dto);
+    }
+
+    @Delete(':id')
+    public async delete(@Param('id') id: number) {
+        return this.serv.delete(id);
     }
 }
