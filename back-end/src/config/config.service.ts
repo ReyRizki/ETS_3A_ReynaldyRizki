@@ -21,10 +21,6 @@ class ConfigService {
         return this;
     }
 
-    public getPort() {
-        return this.getValue('PORT', true);
-    }
-
     public getTypeOrmConfig(): TypeOrmModuleOptions {
         return {
             type: 'postgres',
