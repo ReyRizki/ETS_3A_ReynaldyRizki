@@ -20,20 +20,3 @@ import { Component, Vue } from "vue-property-decorator";
 })
 export default class App extends Vue {}
 </script>
-
-<style lang="scss">
-#pagination {
-  .page-item {
-    .page-link {
-      color: #212529;
-    }
-    &.active {
-      .page-link {
-        color: white;
-        background-color: #212529;
-        border-color: #212529;
-      }
-    }
-  }
-}
-</style>
