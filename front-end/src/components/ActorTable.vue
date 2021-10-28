@@ -62,6 +62,14 @@ import { Component, Vue } from "vue-property-decorator";
 import { BNavbar, BTable, BButton } from "bootstrap-vue";
 import ActorModal from "./ActorModal.vue";
 
+import axios from "axios";
+
+interface Actor {
+  actor_id: number;
+  first_name: string;
+  last_name: string;
+}
+
 @Component({
   components: {
     BNavbar,
@@ -74,17 +82,20 @@ export default class ActorTable extends Vue {
   private perPage = 10;
   private currentPage = 1;
   private fields = ["no", "first_name", "last_name", "actions"];
-  private actors = [
-    { id: 1, first_name: "Dickerson", last_name: "Macdonald" },
-    { id: 2, first_name: "Reina", last_name: "Rizka" },
-  ];
+  private actors : Array<Actor> = [];
   private showAddModal = false;
   private showUpdateModal = false;
   private updateIndex = 0;
   private lastId = 3;
 
   public deleteActor(index: number): void {
-    this.actors.splice(index, 1);
+    const deleteIndex = (this.currentPage - 1) * this.perPage + index;
+    const actor_id = this.actors[deleteIndex].actor_id;
+
+    axios.delete("http://localhost:3000/actor/" + actor_id).then((response) => {
+      console.log(response);
+      this.actors.splice(deleteIndex, 1);
+    });
   }
 
   public toggleModal(name: string): void {
@@ -96,33 +107,43 @@ export default class ActorTable extends Vue {
   }
 
   public openUpdateModal(index: number) {
-    this.updateIndex = index;
+    this.updateIndex = (this.currentPage - 1) * this.perPage + index;
 
     this.toggleModal("update");
   }
 
   public addActor(firstName: string, lastName: string) {
-    this.actors.push({
-      id: this.lastId,
+    const newData = {
       first_name: firstName,
       last_name: lastName,
-    });
+    }
 
-    this.lastId++;
+    axios.post("http://localhost:3000/actor/", newData).then((response) => {
+      this.actors.push(response.data);
+    });
   }
 
   public updateActor(firstName: string, lastName: string) {
+    const actor_id = this.actors[this.updateIndex].actor_id;
     const newData = {
-      id: this.actors[this.updateIndex].id,
+      actor_id: actor_id,
       first_name: firstName,
       last_name: lastName,
     };
 
-    this.actors.splice(this.updateIndex, 1, newData);
+    axios.put("http://localhost:3000/actor/" + actor_id, newData).then((response) => {
+      this.actors.splice(this.updateIndex, 1, newData);
+    });
   }
 
   get currentActor(): any {
     return this.actors[this.updateIndex];
+  }
+
+  beforeMount() {
+    axios.get("http://localhost:3000/actor").then((response) => {
+      this.actors = response.data;
+    });
   }
 }
 </script>
