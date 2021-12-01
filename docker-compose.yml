@@ -1,0 +1,46 @@
+version: '3.8'
+services:
+  db:
+    container_name: pg_container
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: dvdrental
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./restore.sql:/restore.sql
+    networks:
+      - default
+  backend:
+    container_name: ets_backend
+    image: ets_backend
+    build:
+      context: ./back-end
+      target: production
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+      - "9228:9229"
+    volumes:
+      - ./back-end:/usr/src/app
+      - /usr/src/app/node_modules
+    networks:
+      - default
+    depends_on:
+      - db
+  frontend:
+    container_name: ets_frontend
+    image: ets_frontend
+    build:
+      context: ./front-end
+      dockerfile: Dockerfile
+    ports:
+      - "8080:80"
+    networks:
+      - default
+
+networks:
+  default:
